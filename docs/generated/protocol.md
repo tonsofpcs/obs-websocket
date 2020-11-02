@@ -3370,6 +3370,28 @@ _No additional response items._
 
 ---
 
+### ToggleSceneItemProperties
+
+
+Toggles scene specific properties of a source. Unspecified properties will remain unchanged.
+
+**Request Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ------------|
+| `scene-name` | _String (optional)_ | Name of the scene the source item belongs to. Defaults to the current scene. |
+| `item` | _String \| Object_ | Scene Item name (if this field is a string) or specification (if it is an object). |
+| `item.name` | _String (optional)_ | Scene Item name (if the `item` field is an object) |
+| `item.id` | _int (optional)_ | Scene Item ID (if the `item` field is an object) |
+| `visible` | _bool (optional)_ | Toggle visibility of the source if value is present. |
+| `locked` | _bool (optional)_ | Toggle locked of the source if value is present. |
+
+**Response Items:**
+
+_No additional response items._
+
+---
+
 ### ResetSceneItem
 
 

@@ -79,6 +79,7 @@ class WSRequestHandler {
 		RpcResponse SetSceneItemCrop(const RpcRequest&);
 		RpcResponse GetSceneItemProperties(const RpcRequest&);
 		RpcResponse SetSceneItemProperties(const RpcRequest&);
+		RpcResponse ToggleSceneItemProperties(const RpcRequest&);
 		RpcResponse ResetSceneItem(const RpcRequest&);
 		RpcResponse DuplicateSceneItem(const RpcRequest&);
 		RpcResponse DeleteSceneItem(const RpcRequest&);

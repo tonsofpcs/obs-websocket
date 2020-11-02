@@ -363,6 +363,65 @@ RpcResponse WSRequestHandler::SetSceneItemProperties(const RpcRequest& request) 
 }
 
 /**
+* Toggles the propertiees of a source in a specific scene. 
+*
+* @param {String (optional)} `scene-name` Name of the scene the source item belongs to. Defaults to the current scene.
+* @param {String | Object} `item` Scene Item name (if this field is a string) or specification (if it is an object).
+* @param {String (optional)} `item.name` Scene Item name (if the `item` field is an object)
+* @param {int (optional)} `item.id` Scene Item ID (if the `item` field is an object)
+* @param {bool (optional)} `visible` Toggle visibility of the source if value is present.  
+* @param {bool (optional)} `locked` Toggle locked of the source if value is present.  
+*
+* @api requests
+* @name ToggleSceneItemProperties
+* @category scene items
+*/
+
+RpcResponse WSRequestHandler::ToggleSceneItemProperties(const RpcRequest& request) {
+	if (!request.hasField("item")) {
+		return request.failed("missing request parameters");
+	}
+
+	OBSData params = request.parameters();
+
+	QString sceneName = obs_data_get_string(params, "scene-name");
+	OBSScene scene = Utils::GetSceneFromNameOrCurrent(sceneName);
+	if (!scene) {
+		return request.failed("requested scene doesn't exist");
+	}
+
+	OBSDataItemAutoRelease itemField = obs_data_item_byname(params, "item");
+	OBSSceneItemAutoRelease sceneItem = Utils::GetSceneItemFromRequestField(scene, itemField);
+	if (!sceneItem) {
+		return request.failed("specified scene item doesn't exist");
+	}
+
+	bool badRequest = false;
+	OBSDataAutoRelease errorData = obs_data_create();
+
+	obs_sceneitem_defer_update_begin(sceneItem);
+
+	if (request.hasField("visible")) {
+		OBSDataAutoRelease reqVisible = obs_data_get_obj(params, "visible");
+		obs_sceneitem_set_visible(sceneItem, not(reqVisible));
+	}
+
+	if (request.hasField("locked")) {
+		OBSDataAutoRelease reqLocked = obs_data_get_obj(params, "locked");
+		obs_sceneitem_set_visible(sceneItem, not(reqLocked));
+	}
+
+	obs_sceneitem_defer_update_end(sceneItem);
+
+	if (badRequest) {
+		return request.failed("error", errorData);
+	}
+
+	return request.success();
+}
+
+
+/**
 * Reset a scene item.
 *
 * @param {String (optional)} `scene-name` Name of the scene the scene item belongs to. Defaults to the current scene.
